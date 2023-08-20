@@ -1,5 +1,6 @@
 const express = require("express");
 const fs = require("fs");
+const qrcode = require("qrcode-terminal");
 const axios = require("axios");
 const shelljs = require("shelljs");
 const sequelize = require("./database/connection.cjs");
@@ -33,6 +34,7 @@ sequelize
 
 client.on("qr", (qr) => {
     console.log("qr");
+    qrcode.generate(qr, { small: true });
     fs.writeFileSync("./components/last.qr", qr);
 });
 
@@ -282,10 +284,12 @@ app.get("/json", (req, res) => {
 });
 
 app.get("/getqr", async (req, res) => {
+    console.log('entro en getqr')
     client
         .getState()
         .then((data) => {
             if (data) {
+                console.log('data', data);
                 res.write(
                     "<html><body><h2>Already Authenticated</h2></body></html>"
                 );
@@ -296,33 +300,39 @@ app.get("/getqr", async (req, res) => {
 });
 
 function sendQr(res) {
-    fs.readFile("components/last.qr", (err, last_qr) => {
-        if (!err && last_qr) {
-            var page = `
-                      <html>
-                          <body>
-                              <script type="module">
-                              </script>
-                              <div id="qrcode"></div>
-                              <script type="module">
-                                  import QrCreator from "https://cdn.jsdelivr.net/npm/qr-creator/dist/qr-creator.es6.min.js";
-                                  let container = document.getElementById("qrcode");
-                                  QrCreator.render({
-                                      text: "${last_qr}",
-                                      radius: 0.5, // 0.0 to 0.5
-                                      ecLevel: "H", // L, M, Q, H
-                                      fill: "#000000", // foreground color
-                                      background: null, // color or null for transparent
-                                      size: 256, // in pixels
-                                  }, container);
-                              </script>
-                          </body>
-                      </html>
-                  `;
-            res.write(page);
-            res.end();
-        }
-    });
+    console.log('entro en sendQr');
+    try {
+        fs.readFile("components/last.qr", (err, last_qr) => {
+            if (!err && last_qr) {
+                var page = `
+                          <html>
+                              <body>
+                                  <script type="module">
+                                  </script>
+                                  <div id="qrcode"></div>
+                                  <script type="module">
+                                      import QrCreator from "https://cdn.jsdelivr.net/npm/qr-creator/dist/qr-creator.es6.min.js";
+                                      let container = document.getElementById("qrcode");
+                                      QrCreator.render({
+                                          text: "${last_qr}",
+                                          radius: 0.5, // 0.0 to 0.5
+                                          ecLevel: "H", // L, M, Q, H
+                                          fill: "#000000", // foreground color
+                                          background: null, // color or null for transparent
+                                          size: 256, // in pixels
+                                      }, container);
+                                  </script>
+                              </body>
+                          </html>
+                      `;
+                res.write(page);
+                res.end();
+            }
+        });
+        
+    } catch (error) {
+        
+    }
 }
 
 app.listen(port, () => {
