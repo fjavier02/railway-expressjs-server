@@ -280,6 +280,14 @@ app.use("/group", groupRoute);
 app.use("/auth", authRoute);
 app.use("/contact", contactRoute);
 
+app.get('/', (req, res) => {
+    res.send('Choo Choo! Welcome to your Express app 🚅');
+})
+
+app.get("/json", (req, res) => {
+    res.json({"Choo Choo": "Welcome to your Express app 🚅"});
+})
+
 app.listen(port, () => {
     console.log("Server Running Live on Port : " + `http://localhost:${port}`);
 });
