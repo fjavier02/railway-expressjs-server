@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../connection'); // Asegúrate de tener la ruta correcta a tu archivo connection.js
+const sequelize = require('../connection.cjs'); // Asegúrate de tener la ruta correcta a tu archivo connection.js
 
 const PoeTrade = sequelize.define('poeTrade', {
   cliente_id: {

@@ -2,8 +2,8 @@ const express = require("express");
 const fs = require("fs");
 const axios = require("axios");
 const shelljs = require("shelljs");
-const sequelize = require("./database/connection");
-const PoeTrade = require("./database/model/PoeTrade");
+const sequelize = require("./database/connection.cjs");
+const PoeTrade = require("./database/model/PoeTrade.cjs");
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
 
@@ -18,8 +18,7 @@ global.authed = false;
 
 const app = express();
 
-const port = process.env.PORT || 3000;
-
+const port = process.env.PORT;
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 
@@ -267,10 +266,10 @@ var verifyItems = function () {
 
 verifyItems();
 
-const chatRoute = require("./components/chatting");
-const groupRoute = require("./components/group");
-const authRoute = require("./components/auth");
-const contactRoute = require("./components/contact");
+const chatRoute = require("./components/chatting.cjs");
+const groupRoute = require("./components/group.cjs");
+const authRoute = require("./components/auth.cjs");
+const contactRoute = require("./components/contact.cjs");
 
 app.use(function (req, res, next) {
     console.log(req.method + " : " + req.path);
@@ -281,14 +280,6 @@ app.use("/group", groupRoute);
 app.use("/auth", authRoute);
 app.use("/contact", contactRoute);
 
-app.get('/', (req, res) => {
-    res.send('Choo Choo! Welcome to your Express app 🚅');
-})
-
-app.get("/json", (req, res) => {
-    res.json({"Choo Choo": "Welcome to your Express app 🚅"});
-})
-
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+    console.log("Server Running Live on Port : " + `http://localhost:${port}`);
+});
